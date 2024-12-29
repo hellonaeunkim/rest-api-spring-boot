@@ -1,4 +1,4 @@
-package com.annovation.gc_coffee;
+package com.annovation.gccoffee;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package com.annovation.gc_coffee.model;
+package com.annovation.gccoffee.model;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
