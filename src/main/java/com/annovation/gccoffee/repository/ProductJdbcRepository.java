@@ -5,9 +5,7 @@ import com.annovation.gccoffee.model.Product;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.annovation.gccoffee.JdbcUtils.toLocalDateTime;
 import static com.annovation.gccoffee.JdbcUtils.toUUID;
@@ -22,12 +20,18 @@ public class ProductJdbcRepository implements ProductRepository {
 
     @Override
     public List<Product> findAll() {
-        return jdbcTemplate.query("select * from products", productRowMapper);
+        return jdbcTemplate.query("SELECT * FROM products", productRowMapper);
     }
 
     @Override
     public Product insert(Product product) {
-        return null;
+        var update = jdbcTemplate.update("INSERT INTO products(product_id, product_name, category, price, description, created_at, update_at)" +
+                " VALUES(UUID_TO_BIN(:productId), :productName,:category,:price,:description,:createdAt,:updateAt)", toParamMap(product));
+        // DB에 데이터가 추가되지 않거나 문제가 생기면 0을 반환함
+        if (update != 1) {
+            throw new RuntimeException("Nothing was inserted");
+        }
+        return product;
     }
 
     @Override
@@ -55,6 +59,7 @@ public class ProductJdbcRepository implements ProductRepository {
 
     }
 
+    // ResultSet 각 행을 Product 객체로 변환
     private static final RowMapper<Product> productRowMapper = (resultSet, i) -> {
         var productId = toUUID(resultSet.getBytes("product_id"));
         var productName = resultSet.getString("product_name");
@@ -65,4 +70,17 @@ public class ProductJdbcRepository implements ProductRepository {
         var updateAt = toLocalDateTime(resultSet.getTimestamp("update_at"));
         return new Product(productId, productName, category, price, description, createdAt, updateAt);
     };
+
+    private Map<String, Object> toParamMap(Product product) {
+        var paramMap = new HashMap<String, Object>();
+        paramMap.put("productId", product.getProductId().toString().getBytes());
+        paramMap.put("productName", product.getProductName());
+        paramMap.put("category", product.getCategory().toString());
+        paramMap.put("price", product.getPrice());
+        paramMap.put("description", product.getDescription());
+        paramMap.put("createdAt", product.getCreatedAt());
+        paramMap.put("updateAt", product.getUpdateAt());
+
+        return paramMap;
+    }
 }

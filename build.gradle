@@ -27,6 +27,9 @@ dependencies {
 
     // H2
     runtimeOnly 'com.h2database:h2'
+
+    // wix (실제 MySQL 서버 없이도 임베디드 MySQL을 실행할 수 있게 해줌)
+    testImplementation 'com.wix:wix-embedded-mysql:5.0.1'
 }
 
 tasks.named('test') {
