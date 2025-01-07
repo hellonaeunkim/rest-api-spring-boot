@@ -2,11 +2,13 @@ package com.annovation.gccoffee.repository;
 
 import com.annovation.gccoffee.model.Category;
 import com.annovation.gccoffee.model.Product;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public interface ProductRepository {
 
     List<Product> findAll();
